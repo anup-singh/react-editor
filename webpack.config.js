@@ -1,69 +1,60 @@
 const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const nodeExternals = require('webpack-node-externals');
 
-/**
- * Factory to generate Webpack configs for ESM and CJS
- * @param {'esm' | 'cjs'} moduleType
- */
 const createConfig = (moduleType) => {
-    const isESM = moduleType === 'esm';
+  const isESM = moduleType === 'esm';
 
-    return {
-        mode: 'production',
-        entry: './src/index.js',
-        output: {
-            path: path.resolve(__dirname, `dist/${moduleType}`),
-            filename: 'index.js',
-            library: {
-                type: isESM ? 'module' : 'commonjs2',
-            },
-            clean: true,
+  return {
+    mode: 'production',
+    entry: './src/index.js',
+    output: {
+      path: path.resolve(__dirname, `dist/${moduleType}`),
+      filename: 'index.js',
+      library: {
+        type: isESM ? 'module' : 'commonjs2',
+      },
+      clean: true,
+    },
+    experiments: {
+      outputModule: isESM,
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(js|jsx)$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+            }
+          }
         },
-        experiments: {
-            outputModule: isESM,
+        {
+          test: /\.css$/,
+          // Use 'style-loader' to inject CSS into the DOM at runtime.
+          use: ['style-loader', 'css-loader'],
         },
-        module: {
-            rules: [
-                {
-                    test: /\.(js|jsx)$/,
-                    exclude: /node_modules/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            cacheDirectory: true,
-                        }
-                    }
-                },
-                {
-                    test: /\.css$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
-                        'css-loader',
-                    ],
-                },
-                {
-                    test: /\.(png|jpe?g|gif|svg)$/,
-                    type: 'asset/resource',
-                    generator: {
-                        filename: 'assets/[name][ext]', // Optional: Customize asset output
-                    },
-                },
-            ],
+        {
+          test: /\.(png|jpe?g|gif|svg)$/,
+          type: 'asset/resource',
+          generator: {
+            filename: 'assets/[name][ext]',
+          },
         },
-        plugins: [
-            new MiniCssExtractPlugin({
-                filename: '[name].css', // Outputs index.css
-            })
-        ],
-        resolve: {
-            extensions: ['.js', '.jsx'],
-        },
-        externals: [nodeExternals()],
-    };
+      ],
+    },
+    // Keep 'externals' but make an exception for CSS files and other assets
+    externals: [nodeExternals({
+      allowlist: [/\.css$/],
+    })],
+    resolve: {
+      extensions: ['.js', '.jsx'],
+    },
+  };
 };
 
 module.exports = [
-    createConfig('esm'),
-    createConfig('cjs'),
+  createConfig('esm'),
+  createConfig('cjs'),
 ];
