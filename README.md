@@ -75,55 +75,36 @@ The editor provides full markdown support, allowing you to work with markdown co
 
 ```jsx
 import Editor from "@tech-library/react-editor"
+import { useState } from "react"
 
 const MarkdownEditor = () => {
-  const markdownContent = `# Welcome to Markdown
+  const [markdownContent, setMarkdownContent] = useState(
+    '# Welcome to Markdown Mode!\n\n' +
+    'This editor supports **Markdown** syntax:\n\n' +
+    '- Use **bold** and *italic* text\n' +
+    '- Create [links](https://example.com)\n' +
+    '- Add `inline code` and\n\n' +
+    '```\ncode blocks\n```\n\n' +
+    '## Try these shortcuts:\n' +
+    '- **Ctrl+B** for bold\n' +
+    '- **Ctrl+I** for italic\n' +
+    '- **Ctrl+K** for links'
+  )
 
-This is a **bold** statement and this is *italic*.
-
-## Code Example
-
-Here's some inline \`code\` and a code block:
-
-\`\`\`javascript
-const greeting = "Hello, World!"
-console.log(greeting)
-\`\`\`
-
-## Lists
-
-- Item 1
-- Item 2
-  - Nested item
-  - Another nested item
-
-1. First item
-2. Second item
-3. Third item
-
-## Links and Images
-
-[Visit our website](https://example.com)
-
-> This is a blockquote with **bold** text.
-`
-
-  const handleContentChange = (content) => {
+  const handleMarkdownContentChange = (content) => {
+    setMarkdownContent(content)
     console.log("Markdown content:", content)
   }
 
   return (
     <Editor
       initialContent={markdownContent}
-      placeholder="Write your markdown here..."
-      onContentChange={handleContentChange}
+      onContentChange={handleMarkdownContentChange}
       config={{
-        features: {
-          preview: true, // Enable preview to see rendered markdown
-        },
         settings: {
-          placeholder: "Start writing in markdown...",
-        },
+          placeholder: "Write in Markdown syntax...",
+          editorType: "markdown"
+        }
       }}
     />
   )
@@ -132,7 +113,7 @@ console.log(greeting)
 
 ### Markdown-Optimized Configuration
 
-For the best markdown editing experience, use this configuration:
+For the best markdown editing experience, use this configuration from our demo:
 
 ```jsx
 const markdownConfig = {
@@ -140,6 +121,7 @@ const markdownConfig = {
     items: {
       bold: true,
       italic: true,
+      strikethrough: true,
       heading1: true,
       heading2: true,
       heading3: true,
@@ -150,23 +132,43 @@ const markdownConfig = {
       codeBlock: true,
       preview: true,
       previewLayout: true,
-    },
+      // Disable HTML-specific features
+      underline: false,
+      alignLeft: false,
+      alignCenter: false,
+      alignRight: false,
+      alignJustify: false,
+      fontFamily: false,
+      fontSize: false,
+      textColor: false,
+      backgroundColor: false,
+      fileUpload: false
+    }
+  },
+  floatingToolbar: {
+    show: true,
+    items: {
+      bold: true,
+      italic: true,
+      underline: false,
+      link: true
+    }
   },
   features: {
     preview: true,
-    inlineLinkInsert: true,
+    fileUpload: false
   },
   settings: {
-    placeholder: "Write your markdown here...",
-    spellCheck: true,
-  },
+    placeholder: 'Write in Markdown syntax...',
+    editorType: 'markdown'
+  }
 }
 
 const MarkdownEditor = () => {
   return (
     <Editor
       config={markdownConfig}
-      initialContent="# Start Writing\n\nYour **markdown** content here..."
+      initialContent="# Welcome to Markdown Mode!\n\nThis editor supports **Markdown** syntax..."
     />
   )
 }
@@ -184,15 +186,63 @@ const MarkdownEditor = () => {
 - **Line breaks**: Double space or double newline
 - **Horizontal rules**: `---` or `***`
 
+### Keyboard Shortcuts (Markdown Mode)
+
+- **Ctrl+B** (or Cmd+B on Mac) - Bold formatting
+- **Ctrl+I** (or Cmd+I on Mac) - Italic formatting
+- **Ctrl+K** (or Cmd+K on Mac) - Insert link
+
 ## Configuration Options
 
 The editor supports extensive customization through a configuration object. Here are some common configurations:
 
 ### Minimal Editor
 ```jsx
-const minimal = {
-  toolbar: { items: { bold: true, italic: true, link: true } },
-  features: { preview: false, fileUpload: false },
+const minimalConfig = {
+  toolbar: {
+    items: {
+      bold: true,
+      italic: true,
+      underline: true,
+      link: true,
+      // All other items will default to false
+      strikethrough: false,
+      alignLeft: false,
+      alignCenter: false,
+      alignRight: false,
+      alignJustify: false,
+      orderedList: false,
+      unorderedList: false,
+      heading1: false,
+      heading2: false,
+      heading3: false,
+      fontFamily: false,
+      fontSize: false,
+      textColor: false,
+      backgroundColor: false,
+      inlineCode: false,
+      codeBlock: false,
+      fileUpload: false,
+      preview: false,
+      previewLayout: false
+    }
+  },
+  floatingToolbar: {
+    show: true,
+    items: {
+      bold: true,
+      italic: true,
+      underline: false,
+      link: true
+    }
+  },
+  features: {
+    preview: false,
+    fileUpload: false
+  },
+  settings: {
+    placeholder: 'Minimal editor - basic formatting only...'
+  }
 }
 ```
 
