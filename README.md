@@ -117,43 +117,6 @@ For the best markdown editing experience, use this configuration from our demo:
 
 ```jsx
 const markdownConfig = {
-  toolbar: {
-    items: {
-      bold: true,
-      italic: true,
-      strikethrough: true,
-      heading1: true,
-      heading2: true,
-      heading3: true,
-      orderedList: true,
-      unorderedList: true,
-      link: true,
-      inlineCode: true,
-      codeBlock: true,
-      preview: true,
-      previewLayout: true,
-      // Disable HTML-specific features
-      underline: false,
-      alignLeft: false,
-      alignCenter: false,
-      alignRight: false,
-      alignJustify: false,
-      fontFamily: false,
-      fontSize: false,
-      textColor: false,
-      backgroundColor: false,
-      fileUpload: false
-    }
-  },
-  floatingToolbar: {
-    show: true,
-    items: {
-      bold: true,
-      italic: true,
-      underline: false,
-      link: true
-    }
-  },
   features: {
     preview: true,
     fileUpload: false
@@ -200,6 +163,7 @@ The editor supports extensive customization through a configuration object. Here
 ```jsx
 const minimalConfig = {
   toolbar: {
+    show: true,
     items: {
       bold: true,
       italic: true,
