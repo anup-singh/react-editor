@@ -7,6 +7,7 @@ A modern, feature-rich content editor built with React. This editor provides a c
 ✨ **Rich Text Formatting**: Bold, italic, underline, strikethrough, headings, alignment
 🔗 **Link Insertion**: Easy link creation with URL prompts
 💻 **Code Support**: Inline code and code blocks with syntax highlighting
+📝 **Markdown Support**: Native markdown input and output capabilities
 📁 **File Upload**: Image and document upload with preview
 👁️ **Live Preview**: Real-time preview with split-screen layouts
 🎨 **Custom Styling**: Professional editor appearance with responsive design
@@ -65,6 +66,123 @@ const MyComponent = () => {
   return <Editor config={minimalConfig} />
 }
 ```
+
+## Markdown Support
+
+The editor provides full markdown support, allowing you to work with markdown content seamlessly.
+
+### Using Markdown Content
+
+```jsx
+import Editor from "@tech-library/react-editor"
+
+const MarkdownEditor = () => {
+  const markdownContent = `# Welcome to Markdown
+
+This is a **bold** statement and this is *italic*.
+
+## Code Example
+
+Here's some inline \`code\` and a code block:
+
+\`\`\`javascript
+const greeting = "Hello, World!"
+console.log(greeting)
+\`\`\`
+
+## Lists
+
+- Item 1
+- Item 2
+  - Nested item
+  - Another nested item
+
+1. First item
+2. Second item
+3. Third item
+
+## Links and Images
+
+[Visit our website](https://example.com)
+
+> This is a blockquote with **bold** text.
+`
+
+  const handleContentChange = (content) => {
+    console.log("Markdown content:", content)
+  }
+
+  return (
+    <Editor
+      initialContent={markdownContent}
+      placeholder="Write your markdown here..."
+      onContentChange={handleContentChange}
+      config={{
+        features: {
+          preview: true, // Enable preview to see rendered markdown
+        },
+        settings: {
+          placeholder: "Start writing in markdown...",
+        },
+      }}
+    />
+  )
+}
+```
+
+### Markdown-Optimized Configuration
+
+For the best markdown editing experience, use this configuration:
+
+```jsx
+const markdownConfig = {
+  toolbar: {
+    items: {
+      bold: true,
+      italic: true,
+      heading1: true,
+      heading2: true,
+      heading3: true,
+      orderedList: true,
+      unorderedList: true,
+      link: true,
+      inlineCode: true,
+      codeBlock: true,
+      preview: true,
+      previewLayout: true,
+    },
+  },
+  features: {
+    preview: true,
+    inlineLinkInsert: true,
+  },
+  settings: {
+    placeholder: "Write your markdown here...",
+    spellCheck: true,
+  },
+}
+
+const MarkdownEditor = () => {
+  return (
+    <Editor
+      config={markdownConfig}
+      initialContent="# Start Writing\n\nYour **markdown** content here..."
+    />
+  )
+}
+```
+
+### Supported Markdown Features
+
+- **Headers**: `# H1`, `## H2`, `### H3`
+- **Emphasis**: `**bold**`, `*italic*`, `~~strikethrough~~`
+- **Lists**: Ordered (`1. item`) and unordered (`- item`)
+- **Links**: `[text](url)` and `<url>`
+- **Code**: Inline `` `code` `` and code blocks ``` ``` ```
+- **Blockquotes**: `> quote text`
+- **Images**: `![alt](src)`
+- **Line breaks**: Double space or double newline
+- **Horizontal rules**: `---` or `***`
 
 ## Configuration Options
 
@@ -201,13 +319,13 @@ const editorConfig = {
 
 ## Props
 
-| Prop              | Type       | Default              | Description                                 |
-| ----------------- | ---------- | -------------------- | ------------------------------------------- |
-| `config`          | `Object`   | `{}`                 | Configuration object for customizing editor |
-| `initialContent`  | `string`   | `''`                 | Initial HTML content                        |
-| `placeholder`     | `string`   | `'Start writing...'` | Placeholder text                            |
-| `onContentChange` | `function` | -                    | Callback when content changes               |
-| `className`       | `string`   | `''`                 | Additional CSS classes                      |
+| Prop              | Type       | Default              | Description                                           |
+| ----------------- | ---------- | -------------------- | ----------------------------------------------------- |
+| `config`          | `Object`   | `{}`                 | Configuration object for customizing editor           |
+| `initialContent`  | `string`   | `''`                 | Initial HTML or Markdown content                      |
+| `placeholder`     | `string`   | `'Start writing...'` | Placeholder text                                      |
+| `onContentChange` | `function` | -                    | Callback when content changes (receives HTML/Markdown) |
+| `className`       | `string`   | `''`                 | Additional CSS classes                                |
 
 ## Configuration Tips
 
@@ -216,6 +334,8 @@ const editorConfig = {
 - All toolbar items default to `true` if not specified
 - Use `show: false` to hide entire sections
 - Configuration is merged with defaults, so partial configs work perfectly
+- Enable `preview: true` in features for the best markdown editing experience
+- The editor automatically detects and handles both HTML and Markdown content
 
 ## License
 
