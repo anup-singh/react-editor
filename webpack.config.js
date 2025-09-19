@@ -31,6 +31,24 @@ const createConfig = (moduleType) => {
           }
         },
         {
+          test: /\.(ts|tsx)$/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                cacheDirectory: true,
+              }
+            },
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              }
+            }
+          ]
+        },
+        {
           test: /\.css$/,
           // Use 'style-loader' to inject CSS into the DOM at runtime.
           use: ['style-loader', 'css-loader'],
@@ -49,7 +67,10 @@ const createConfig = (moduleType) => {
       allowlist: [/\.css$/],
     })],
     resolve: {
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      }
     },
   };
 };

@@ -39,7 +39,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -47,6 +47,24 @@ module.exports = {
             presets: ['@babel/preset-env', '@babel/preset-react'],
           },
         },
+      },
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env', '@babel/preset-react'],
+            },
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            }
+          }
+        ]
       },
       {
         test: /\.css$/,
@@ -64,7 +82,15 @@ module.exports = {
     ],
   },
 
-  // 3. Plugins to perform tasks outside of basic compilation.
+  // 3. Resolve configuration for file extensions and aliases
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    }
+  },
+
+  // 4. Plugins to perform tasks outside of basic compilation.
   plugins: [
     // Generates an HTML file and injects your bundled JS into it.
     new HtmlWebpackPlugin({
