@@ -216,6 +216,46 @@ const Editor = forwardRef<EditorRef, EditorProps>(
       ]
     )
 
+    // HTML mode keyboard shortcuts handler
+    const handleHtmlKeyDown = useCallback((e: KeyboardEvent): void => {
+      if (isMarkdown) return // Only handle HTML mode
+
+      // Ctrl+B for bold
+      if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+        e.preventDefault()
+        execCommand("bold")
+        return
+      }
+
+      // Ctrl+I for italic
+      if ((e.ctrlKey || e.metaKey) && e.key === "i") {
+        e.preventDefault()
+        execCommand("italic")
+        return
+      }
+
+      // Ctrl+U for underline
+      if ((e.ctrlKey || e.metaKey) && e.key === "u") {
+        e.preventDefault()
+        execCommand("underline")
+        return
+      }
+
+      // Ctrl+K for link
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault()
+        insertLink()
+        return
+      }
+
+      // Ctrl+Shift+X for strikethrough
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "X") {
+        e.preventDefault()
+        execCommand("strikeThrough")
+        return
+      }
+    }, [isMarkdown, execCommand, insertLink])
+
     // Event listeners
     useEffect(() => {
       const editor = editorRef.current
@@ -228,8 +268,11 @@ const Editor = forwardRef<EditorRef, EditorProps>(
         setTimeout(() => handleTextSelection(editorRef), 10)
       }
       const handleKeyDown = (e: Event): void => {
+        const keyboardEvent = e as KeyboardEvent
         if (isMarkdown) {
-          handleMarkdownKeyDown(e as KeyboardEvent)
+          handleMarkdownKeyDown(keyboardEvent)
+        } else {
+          handleHtmlKeyDown(keyboardEvent)
         }
       }
       const handleClick = (e: MouseEvent): void => {
@@ -264,6 +307,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
       isEnabled,
       isMarkdown,
       handleMarkdownKeyDown,
+      handleHtmlKeyDown,
     ])
 
     return (

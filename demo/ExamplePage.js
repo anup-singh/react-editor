@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useRef } from 'react';
-import Editor from '../src/index';
+import Editor from '../src/index.ts';
 
 const ExamplePage = () => {
   const [editorContent, setEditorContent] = useState('<p>Welcome to your custom content editor!</p><p>Try these features:</p><ul><li>Select text to see the floating toolbar</li><li>Use the main toolbar for formatting</li><li>Upload images and files</li><li>Add links and change colors</li></ul>');

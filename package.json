@@ -17,7 +17,7 @@
     "version:minor": "npm version minor",
     "version:major": "npm version major",
     "prepublishOnly": "npm-run-all lint test version:patch build",
-    "prepack": "npm-run-all lint test version:patch build",
+    "prepack": "npm-run-all lint test build",
     "lint": "eslint \"{src,test}/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"{src,test}/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "fix": "npm run format && npm run lint:fix",

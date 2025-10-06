@@ -104,11 +104,12 @@ const Toolbar: FC<ToolbarProps> = ({
   }
 
   return (
-    <div className="toolbar" data-testid="toolbar">
+    <div className="editor-toolbar" data-testid="toolbar">
       {/* Basic Formatting */}
       <div className="toolbar-group">
         {config.bold && (
           <button
+            className="toolbar-btn"
             onClick={() => execCommand("bold", undefined)}
             data-testid="bold-btn"
             aria-label="Bold"
@@ -120,6 +121,7 @@ const Toolbar: FC<ToolbarProps> = ({
         )}
         {config.italic && (
           <button
+            className="toolbar-btn"
             onClick={() => execCommand("italic", undefined)}
             data-testid="italic-btn"
             aria-label="Italic"
@@ -131,6 +133,7 @@ const Toolbar: FC<ToolbarProps> = ({
         )}
         {config.underline && (
           <button
+            className="toolbar-btn"
             onClick={() => execCommand("underline", undefined)}
             data-testid="underline-btn"
             aria-label="Underline"
@@ -142,6 +145,7 @@ const Toolbar: FC<ToolbarProps> = ({
         )}
         {config.strikethrough && (
           <button
+            className="toolbar-btn"
             onClick={() => execCommand("strikeThrough", undefined)}
             data-testid="strikethrough-btn"
             aria-label="Strikethrough"
@@ -157,6 +161,7 @@ const Toolbar: FC<ToolbarProps> = ({
       {(config.heading1 || config.heading2 || config.heading3) && (
         <div className="toolbar-group">
           <select
+            className="toolbar-select"
             onChange={handleFormatChange}
             data-testid="format-select"
             disabled={disabled}
@@ -175,6 +180,7 @@ const Toolbar: FC<ToolbarProps> = ({
       {config.fontFamily && (
         <div className="toolbar-group">
           <select
+            className="toolbar-select"
             onChange={handleFontFamilyChange}
             data-testid="font-family-select"
             disabled={disabled}
@@ -192,6 +198,7 @@ const Toolbar: FC<ToolbarProps> = ({
       {config.fontSize && (
         <div className="toolbar-group">
           <select
+            className="toolbar-select"
             onChange={handleFontSizeChange}
             data-testid="font-size-select"
             disabled={disabled}
@@ -214,6 +221,7 @@ const Toolbar: FC<ToolbarProps> = ({
         <div className="toolbar-group">
           {config.alignLeft && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("justifyLeft", undefined)}
               data-testid="align-left-btn"
               aria-label="Align Left"
@@ -225,6 +233,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.alignCenter && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("justifyCenter", undefined)}
               data-testid="align-center-btn"
               aria-label="Center"
@@ -236,6 +245,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.alignRight && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("justifyRight", undefined)}
               data-testid="align-right-btn"
               aria-label="Align Right"
@@ -247,6 +257,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.alignJustify && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("justifyFull", undefined)}
               data-testid="align-justify-btn"
               aria-label="Justify"
@@ -264,6 +275,7 @@ const Toolbar: FC<ToolbarProps> = ({
         <div className="toolbar-group">
           {config.orderedList && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("insertOrderedList", undefined)}
               data-testid="ordered-list-btn"
               aria-label="Numbered List"
@@ -275,6 +287,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.unorderedList && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("insertUnorderedList", undefined)}
               data-testid="unordered-list-btn"
               aria-label="Bullet List"
@@ -293,6 +306,7 @@ const Toolbar: FC<ToolbarProps> = ({
           {config.textColor && (
             <input
               type="color"
+              className="color-picker"
               onChange={handleTextColorChange}
               data-testid="text-color-picker"
               disabled={disabled}
@@ -302,6 +316,7 @@ const Toolbar: FC<ToolbarProps> = ({
           {config.backgroundColor && (
             <input
               type="color"
+              className="color-picker"
               onChange={handleBackgroundColorChange}
               data-testid="background-color-picker"
               disabled={disabled}
@@ -316,6 +331,7 @@ const Toolbar: FC<ToolbarProps> = ({
         <div className="toolbar-group">
           {config.link && (
             <button
+              className="toolbar-btn"
               onClick={insertLink}
               data-testid="link-btn"
               aria-label="Insert Link"
@@ -327,6 +343,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.inlineCode && (
             <button
+              className="toolbar-btn"
               onClick={insertInlineCode}
               data-testid="inline-code-btn"
               aria-label="Insert Inline Code"
@@ -338,6 +355,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.codeBlock && (
             <button
+              className="toolbar-btn"
               onClick={insertCodeBlock}
               data-testid="code-block-btn"
               aria-label="Insert Code Block"
@@ -354,6 +372,7 @@ const Toolbar: FC<ToolbarProps> = ({
       {config.fileUpload && (
         <div className="toolbar-group">
           <button
+            className="toolbar-btn"
             onClick={onFileUploadClick}
             data-testid="file-upload-btn"
             aria-label="Upload File"
@@ -370,6 +389,7 @@ const Toolbar: FC<ToolbarProps> = ({
         <div className="toolbar-group">
           {config.preview && (
             <button
+              className="toolbar-btn"
               onClick={onTogglePreview}
               data-testid="preview-btn"
               aria-label="Toggle Preview"
@@ -381,6 +401,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.previewLayout && isPreviewVisible && (
             <button
+              className="toolbar-btn"
               onClick={onToggleLayout}
               data-testid="layout-btn"
               aria-label={`Switch to ${
@@ -401,6 +422,7 @@ const Toolbar: FC<ToolbarProps> = ({
       {config.maximize && (
         <div className="toolbar-group">
           <button
+            className="toolbar-btn"
             onClick={onToggleMaximize}
             data-testid="maximize-btn"
             aria-label={isMaximized ? "Minimize" : "Maximize"}
@@ -417,6 +439,7 @@ const Toolbar: FC<ToolbarProps> = ({
         <div className="toolbar-group">
           {config.undo && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("undo", undefined)}
               data-testid="undo-btn"
               aria-label="Undo"
@@ -428,6 +451,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.redo && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("redo", undefined)}
               data-testid="redo-btn"
               aria-label="Redo"
@@ -439,6 +463,7 @@ const Toolbar: FC<ToolbarProps> = ({
           )}
           {config.clearFormatting && (
             <button
+              className="toolbar-btn"
               onClick={() => execCommand("removeFormat", undefined)}
               data-testid="clear-formatting-btn"
               aria-label="Clear Formatting"
