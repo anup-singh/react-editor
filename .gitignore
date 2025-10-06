@@ -141,3 +141,4 @@ vite.config.ts.timestamp-*
 CLAUDE.md
 .codesandbox
 .DS_Store
+dist

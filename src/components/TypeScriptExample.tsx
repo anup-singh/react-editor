@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import { EditorConfig, EditorProps } from '@/types';
+import React, { useState, useCallback } from "react"
+import { EditorConfig } from "@/types"
 
 interface TypeScriptExampleProps {
-  title?: string;
-  onConfigChange?: (config: EditorConfig) => void;
+  title?: string
+  onConfigChange?: (config: EditorConfig) => void
 }
 
 const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
   title = "TypeScript Editor Example",
-  onConfigChange
+  onConfigChange,
 }) => {
   const [config, setConfig] = useState<EditorConfig>({
     toolbar: {
@@ -18,7 +18,7 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
         italic: true,
         underline: true,
         link: true,
-      }
+      },
     },
     features: {
       preview: true,
@@ -28,20 +28,20 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
       placeholder: "Start writing with TypeScript support...",
       editorType: "html",
       spellCheck: true,
-    }
-  });
+    },
+  })
 
-  const [content, setContent] = useState<string>("");
+  const [content] = useState<string>("")
 
-  const handleContentChange = useCallback((newContent: string) => {
-    setContent(newContent);
-    console.log('Content changed:', newContent);
-  }, []);
+  // Removed unused handleContentChange function
 
-  const handleConfigUpdate = useCallback((newConfig: EditorConfig) => {
-    setConfig(newConfig);
-    onConfigChange?.(newConfig);
-  }, [onConfigChange]);
+  const handleConfigUpdate = useCallback(
+    (newConfig: EditorConfig) => {
+      setConfig(newConfig)
+      onConfigChange?.(newConfig)
+    },
+    [onConfigChange]
+  )
 
   const togglePreview = useCallback(() => {
     const newConfig: EditorConfig = {
@@ -49,10 +49,10 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
       features: {
         ...config.features,
         preview: !config.features?.preview,
-      }
-    };
-    handleConfigUpdate(newConfig);
-  }, [config, handleConfigUpdate]);
+      },
+    }
+    handleConfigUpdate(newConfig)
+  }, [config, handleConfigUpdate])
 
   const toggleFileUpload = useCallback(() => {
     const newConfig: EditorConfig = {
@@ -60,10 +60,10 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
       features: {
         ...config.features,
         fileUpload: !config.features?.fileUpload,
-      }
-    };
-    handleConfigUpdate(newConfig);
-  }, [config, handleConfigUpdate]);
+      },
+    }
+    handleConfigUpdate(newConfig)
+  }, [config, handleConfigUpdate])
 
   return (
     <div className="typescript-example">
@@ -75,7 +75,7 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           type="button"
         >
-          {config.features?.preview ? 'Disable' : 'Enable'} Preview
+          {config.features?.preview ? "Disable" : "Enable"} Preview
         </button>
 
         <button
@@ -83,7 +83,7 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
           className="px-4 py-2 bg-green-500 text-white rounded hover:green-600"
           type="button"
         >
-          {config.features?.fileUpload ? 'Disable' : 'Enable'} File Upload
+          {config.features?.fileUpload ? "Disable" : "Enable"} File Upload
         </button>
       </div>
 
@@ -94,8 +94,8 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
             Editor would be rendered here with TypeScript support
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            Preview: {config.features?.preview ? 'Enabled' : 'Disabled'} |
-            File Upload: {config.features?.fileUpload ? 'Enabled' : 'Disabled'}
+            Preview: {config.features?.preview ? "Enabled" : "Disabled"} | File
+            Upload: {config.features?.fileUpload ? "Enabled" : "Disabled"}
           </p>
         </div>
       </div>
@@ -103,7 +103,7 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
       <div className="mt-4">
         <h3 className="font-semibold mb-2">Current Content:</h3>
         <pre className="bg-gray-100 p-2 rounded text-sm overflow-auto">
-          {content || 'No content yet...'}
+          {content || "No content yet..."}
         </pre>
       </div>
 
@@ -114,7 +114,7 @@ const TypeScriptExample: React.FC<TypeScriptExampleProps> = ({
         </pre>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TypeScriptExample;
+export default TypeScriptExample

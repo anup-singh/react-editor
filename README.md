@@ -461,6 +461,89 @@ const MyComponent = () => {
 - Enable `preview: true` in features for the best markdown editing experience
 - The editor automatically detects and handles both HTML and Markdown content
 
+## TypeScript Support
+
+This package includes comprehensive TypeScript definitions. All types are automatically available when using TypeScript.
+
+### Type Imports
+
+```typescript
+import Editor, {
+  EditorProps,
+  EditorRef,
+  EditorConfig,
+  ToolbarConfig,
+  SettingsConfig,
+  EditorType,
+  PreviewLayout
+} from '@tech-library/react-editor';
+```
+
+### TypeScript Usage Example
+
+```typescript
+import React, { useRef } from 'react';
+import Editor, { EditorRef, EditorConfig } from '@tech-library/react-editor';
+
+const MyTypedComponent: React.FC = () => {
+  const editorRef = useRef<EditorRef>(null);
+
+  const config: EditorConfig = {
+    toolbar: {
+      show: true,
+      items: {
+        bold: true,
+        italic: true,
+        heading1: true
+      }
+    },
+    settings: {
+      editorType: 'markdown',
+      placeholder: 'Start writing in Markdown...'
+    }
+  };
+
+  const handleContentChange = (content: string): void => {
+    console.log('Content changed:', content);
+  };
+
+  const focusEditor = (): void => {
+    editorRef.current?.focus();
+  };
+
+  return (
+    <div>
+      <button onClick={focusEditor}>Focus Editor</button>
+      <Editor
+        ref={editorRef}
+        config={config}
+        onContentChange={handleContentChange}
+        className="my-typed-editor"
+      />
+    </div>
+  );
+};
+```
+
+### Available Types
+
+- `EditorProps` - Main component props interface
+- `EditorRef` - Component ref methods interface
+- `EditorConfig` - Configuration object interface
+- `ToolbarConfig` - Toolbar configuration interface
+- `SettingsConfig` - Settings configuration interface
+- `EditorType` - Union type: `'html' | 'markdown'`
+- `PreviewLayout` - Union type: `'vertical' | 'horizontal'`
+
+### Utility Functions
+
+```typescript
+import { markdownToHtml, htmlToMarkdown } from '@tech-library/react-editor';
+
+const html: string = markdownToHtml('**bold text**');
+const markdown: string = htmlToMarkdown('<strong>bold text</strong>');
+```
+
 ## License
 
 MIT License

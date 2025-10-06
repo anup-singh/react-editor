@@ -1,8 +1,33 @@
-import React, { forwardRef } from "react"
-import PropTypes from "prop-types"
+import React, { forwardRef, Ref } from "react"
 
-const FloatingToolbar = forwardRef(
-  ({ config, isVisible, position, execCommand, insertLink }, ref) => {
+// Define the shape for the configuration object
+interface ToolbarConfig {
+  bold?: boolean
+  italic?: boolean
+  underline?: boolean
+  link?: boolean
+}
+
+// Define the shape for the position object
+interface ToolbarPosition {
+  top: number
+  left: number
+}
+
+// Define the component's props
+interface FloatingToolbarProps {
+  config: ToolbarConfig
+  isVisible: boolean
+  position: ToolbarPosition
+  execCommand: (command: string) => void
+  insertLink: () => void
+}
+
+const FloatingToolbar = forwardRef<HTMLDivElement, FloatingToolbarProps>(
+  (
+    { config, isVisible, position, execCommand, insertLink },
+    ref: Ref<HTMLDivElement>
+  ) => {
     if (!isVisible) return null
 
     return (
@@ -57,21 +82,5 @@ const FloatingToolbar = forwardRef(
 )
 
 FloatingToolbar.displayName = "FloatingToolbar"
-
-FloatingToolbar.propTypes = {
-  config: PropTypes.shape({
-    bold: PropTypes.bool,
-    italic: PropTypes.bool,
-    underline: PropTypes.bool,
-    link: PropTypes.bool,
-  }).isRequired,
-  isVisible: PropTypes.bool.isRequired,
-  position: PropTypes.shape({
-    top: PropTypes.number.isRequired,
-    left: PropTypes.number.isRequired,
-  }).isRequired,
-  execCommand: PropTypes.func.isRequired,
-  insertLink: PropTypes.func.isRequired,
-}
 
 export default FloatingToolbar

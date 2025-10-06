@@ -1,5 +1,7 @@
 // Default Editor Configuration
-export const defaultEditorConfig = {
+import { EditorConfig } from "./types/index"
+
+export const defaultEditorConfig: EditorConfig = {
   // Toolbar Configuration
   toolbar: {
     show: true,
@@ -105,13 +107,18 @@ export const defaultEditorConfig = {
     initialContent: "",
     autoFocus: false,
     spellCheck: true,
-    editorType: "html", // 'html' or 'markdown'
+    editorType: "html" as const, // 'html' or 'markdown'
   },
 }
 
 // Helper function to merge user config with default config
-export const mergeEditorConfig = (userConfig = {}) => {
-  const merge = (target, source) => {
+export const mergeEditorConfig = (
+  userConfig: Partial<EditorConfig> = {}
+): EditorConfig => {
+  const merge = (
+    target: Record<string, unknown>,
+    source: Record<string, unknown>
+  ): Record<string, unknown> => {
     const result = { ...target }
 
     for (const key in source) {

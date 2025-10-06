@@ -1,11 +1,20 @@
-import React, { forwardRef, useEffect } from "react"
-import PropTypes from "prop-types"
+import React, { forwardRef, useEffect, RefObject } from "react"
 
-const EditorContent = forwardRef(
+// 1. Define the types for the component's props
+interface EditorContentProps {
+  placeholder: string
+  initialContent?: string
+  onContentChange: (ref: RefObject<HTMLDivElement>) => void
+  spellCheck?: boolean
+  disabled?: boolean
+  editorType?: "html" | "markdown"
+}
+
+const EditorContent = forwardRef<HTMLDivElement, EditorContentProps>(
   (
     {
       placeholder,
-      initialContent,
+      initialContent = "", // 3. Use a default value here instead of defaultProps
       onContentChange,
       spellCheck = true,
       disabled = false,
@@ -15,7 +24,13 @@ const EditorContent = forwardRef(
   ) => {
     // Initialize content only once
     useEffect(() => {
-      if (ref.current && initialContent && !ref.current.hasChildNodes()) {
+      if (
+        ref &&
+        typeof ref !== "function" &&
+        ref.current &&
+        initialContent &&
+        !ref.current.hasChildNodes()
+      ) {
         if (editorType === "markdown") {
           ref.current.textContent = initialContent
         } else {
@@ -24,9 +39,9 @@ const EditorContent = forwardRef(
       }
     }, [initialContent, ref, editorType])
 
-    const handleKeyDown = e => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "Enter") {
-        setTimeout(() => onContentChange(ref), 0)
+        setTimeout(() => onContentChange(ref as RefObject<HTMLDivElement>), 0)
       }
     }
 
@@ -37,7 +52,11 @@ const EditorContent = forwardRef(
         contentEditable={!disabled}
         suppressContentEditableWarning
         spellCheck={spellCheck}
-        onInput={disabled ? undefined : () => onContentChange(ref)}
+        onInput={
+          disabled
+            ? undefined
+            : () => onContentChange(ref as RefObject<HTMLDivElement>)
+        }
         onKeyDown={disabled ? undefined : handleKeyDown}
         data-placeholder={placeholder}
         data-testid="editor-content"
@@ -54,21 +73,5 @@ const EditorContent = forwardRef(
 )
 
 EditorContent.displayName = "EditorContent"
-
-EditorContent.propTypes = {
-  placeholder: PropTypes.string.isRequired,
-  initialContent: PropTypes.string,
-  onContentChange: PropTypes.func.isRequired,
-  spellCheck: PropTypes.bool,
-  disabled: PropTypes.bool,
-  editorType: PropTypes.oneOf(["html", "markdown"]),
-}
-
-EditorContent.defaultProps = {
-  spellCheck: true,
-  disabled: false,
-  editorType: "html",
-  initialContent: "",
-}
 
 export default EditorContent

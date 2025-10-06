@@ -4,30 +4,30 @@ import React, {
   useImperativeHandle,
   forwardRef,
   useState,
+  useCallback,
 } from "react"
-import PropTypes from "prop-types"
 import "./index.css"
 import "./input.css"
 
-// Components
-import {
-  Toolbar,
-  FloatingToolbar,
-  FileUpload,
-  EditorContent,
-  PreviewPane,
-} from "./components"
+// Type imports
+import { EditorProps, EditorRef, EditorConfig, EditorType } from "./types/index"
+
+// Components - TypeScript converted components from index
+import { PreviewPane, Toolbar } from "./components"
+
+// Components - JavaScript components imported directly
+import FloatingToolbar from "./components/FloatingToolbar"
+import FileUpload from "./components/FileUpload"
+import EditorContent from "./components/EditorContent"
 import InputModal from "./components/InputModal"
 import InlineLinkInsert from "./components/InlineLinkInsert"
 
-// Hooks
-import {
-  useEditorContent,
-  useFloatingToolbar,
-  useEditorCommands,
-  useFileUpload,
-  usePreview,
-} from "./hooks"
+// Hooks - JavaScript hooks imported directly
+import { useEditorContent } from "./hooks/useEditorContent"
+import { useFloatingToolbar } from "./hooks/useFloatingToolbar"
+import { useEditorCommands } from "./hooks/useEditorCommands"
+import { useFileUpload } from "./hooks/useFileUpload"
+import { usePreview } from "./hooks/usePreview"
 import { useInputModal } from "./hooks/useInputModal"
 import { useInlineLinkInsert } from "./hooks/useInlineLinkInsert"
 import useMarkdownEditor from "./hooks/useMarkdownEditor"
@@ -35,7 +35,7 @@ import useMarkdownEditor from "./hooks/useMarkdownEditor"
 // Configuration
 import { mergeEditorConfig } from "./editorConfig"
 
-const Editor = forwardRef(
+const Editor = forwardRef<EditorRef, EditorProps>(
   (
     {
       initialContent = "",
@@ -47,24 +47,24 @@ const Editor = forwardRef(
     ref
   ) => {
     // Merge user config with default config
-    const editorConfig = mergeEditorConfig(config)
+    const editorConfig: EditorConfig = mergeEditorConfig(config)
 
     // Extract commonly used config values
-    const finalPlaceholder = editorConfig.settings.placeholder || placeholder
+    const finalPlaceholder = editorConfig.settings?.placeholder || placeholder
     const finalInitialContent =
-      editorConfig.settings.initialContent || initialContent
-    const editorType = editorConfig.settings.editorType || "html"
+      editorConfig.settings?.initialContent || initialContent
+    const editorType: EditorType = editorConfig.settings?.editorType || "html"
 
     // State for enable/disable functionality
-    const [isEnabled, setIsEnabled] = useState(true)
+    const [isEnabled, setIsEnabled] = useState<boolean>(true)
 
     // State for maximize/minimize functionality
-    const [isMaximized, setIsMaximized] = useState(false)
+    const [isMaximized, setIsMaximized] = useState<boolean>(false)
 
     // Refs
-    const editorRef = useRef(null)
-    const toolbarRef = useRef(null)
-    const fileInputRef = useRef(null)
+    const editorRef = useRef<HTMLDivElement>(null)
+    const toolbarRef = useRef<HTMLDivElement>(null)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     // Custom hooks
     const { content, handleContentChange } = useEditorContent(
@@ -88,9 +88,10 @@ const Editor = forwardRef(
       usePreview()
 
     // Toggle maximize function
-    const toggleMaximize = () => {
+    const toggleMaximize = useCallback((): void => {
       setIsMaximized(prev => !prev)
-    }
+    }, [])
+
     const {
       isMarkdown,
       handleMarkdownKeyDown,
@@ -103,41 +104,41 @@ const Editor = forwardRef(
     // Expose editor methods via ref
     useImperativeHandle(
       ref,
-      () => ({
+      (): EditorRef => ({
         // Focus the editor
-        focus: () => {
+        focus: (): void => {
           if (editorRef.current) {
             editorRef.current.focus()
           }
         },
 
         // Remove focus from the editor
-        blur: () => {
+        blur: (): void => {
           if (editorRef.current) {
             editorRef.current.blur()
           }
         },
 
         // Check if editor has focus
-        hasFocus: () => {
+        hasFocus: (): boolean => {
           return document.activeElement === editorRef.current
         },
 
         // Enable the editor
-        enable: () => {
+        enable: (): void => {
           setIsEnabled(true)
           if (editorRef.current) {
-            editorRef.current.contentEditable = true
+            editorRef.current.contentEditable = "true"
             editorRef.current.style.opacity = "1"
             editorRef.current.style.pointerEvents = "auto"
           }
         },
 
         // Disable the editor
-        disable: () => {
+        disable: (): void => {
           setIsEnabled(false)
           if (editorRef.current) {
-            editorRef.current.contentEditable = false
+            editorRef.current.contentEditable = "false"
             editorRef.current.style.opacity = "0.6"
             editorRef.current.style.pointerEvents = "none"
             editorRef.current.blur() // Remove focus when disabling
@@ -145,10 +146,10 @@ const Editor = forwardRef(
         },
 
         // Get current content (legacy method, returns processed content)
-        getContent: () => content,
+        getContent: (): string => content,
 
         // Get contents based on editor type (raw content from DOM)
-        getContents: () => {
+        getContents: (): string => {
           if (!editorRef.current) return ""
 
           if (isMarkdown) {
@@ -161,7 +162,7 @@ const Editor = forwardRef(
         },
 
         // Set content programmatically
-        setContent: newContent => {
+        setContent: (newContent: string): void => {
           if (editorRef.current) {
             if (isMarkdown) {
               editorRef.current.textContent = newContent
@@ -173,10 +174,10 @@ const Editor = forwardRef(
         },
 
         // Check if editor is enabled
-        isEnabled: () => isEnabled,
+        isEnabled: (): boolean => isEnabled,
 
         // Clear all content
-        clear: () => {
+        clear: (): void => {
           if (editorRef.current) {
             if (isMarkdown) {
               editorRef.current.textContent = ""
@@ -188,17 +189,20 @@ const Editor = forwardRef(
         },
 
         // Get current editor type
-        getEditorType: () => editorType,
+        getEditorType: (): string => editorType,
 
         // Convert content between formats
-        convertContent: (content, fromType, toType) =>
-          convertContent(content, fromType, toType),
+        convertContent: (
+          content: string,
+          fromType: EditorType,
+          toType: EditorType
+        ): string => convertContent(content, fromType, toType),
 
         // Maximize/minimize editor
-        maximize: () => setIsMaximized(true),
-        minimize: () => setIsMaximized(false),
-        toggleMaximize: () => toggleMaximize(),
-        isMaximized: () => isMaximized,
+        maximize: (): void => setIsMaximized(true),
+        minimize: (): void => setIsMaximized(false),
+        toggleMaximize: (): void => toggleMaximize(),
+        isMaximized: (): boolean => isMaximized,
       }),
       [
         content,
@@ -217,17 +221,19 @@ const Editor = forwardRef(
       const editor = editorRef.current
       if (!editor) return
 
-      const handleMouseUp = () =>
+      const handleMouseUp = (): void => {
         setTimeout(() => handleTextSelection(editorRef), 10)
-      const handleKeyUp = () =>
+      }
+      const handleKeyUp = (): void => {
         setTimeout(() => handleTextSelection(editorRef), 10)
-      const handleKeyDown = e => {
+      }
+      const handleKeyDown = (e: Event): void => {
         if (isMarkdown) {
-          handleMarkdownKeyDown(e)
+          handleMarkdownKeyDown(e as KeyboardEvent)
         }
       }
-      const handleClick = e => {
-        if (!toolbarRef.current?.contains(e.target)) {
+      const handleClick = (e: MouseEvent): void => {
+        if (!toolbarRef.current?.contains(e.target as Node)) {
           hideToolbar()
         }
         // Also hide inline link insert if clicking outside
@@ -268,11 +274,17 @@ const Editor = forwardRef(
         data-editor-type={editorType}
         data-testid="custom-editor"
       >
-        {editorConfig.toolbar.show && (
+        {editorConfig.toolbar?.show && (
           <Toolbar
-            config={editorConfig.toolbar.items}
-            typography={editorConfig.typography}
-            execCommand={isMarkdown ? markdownCommands : execCommand}
+            config={editorConfig.toolbar.items || {}}
+            typography={
+              editorConfig.typography || { fontFamilies: [], fontSizes: [] }
+            }
+            execCommand={
+              isMarkdown
+                ? (markdownCommands as unknown as typeof execCommand)
+                : execCommand
+            }
             insertLink={
               isMarkdown
                 ? markdownCommands.link
@@ -296,10 +308,10 @@ const Editor = forwardRef(
           />
         )}
 
-        {editorConfig.floatingToolbar.show && (
+        {editorConfig.floatingToolbar?.show && (
           <FloatingToolbar
             ref={toolbarRef}
-            config={editorConfig.floatingToolbar.items}
+            config={editorConfig.floatingToolbar.items || {}}
             isVisible={isVisible}
             position={position}
             execCommand={execCommand}
@@ -318,7 +330,7 @@ const Editor = forwardRef(
               placeholder={finalPlaceholder}
               initialContent={finalInitialContent}
               onContentChange={handleContentChange}
-              spellCheck={editorConfig.settings.spellCheck}
+              spellCheck={editorConfig.settings?.spellCheck ?? true}
               disabled={!isEnabled}
               editorType={editorType}
             />
@@ -327,12 +339,14 @@ const Editor = forwardRef(
               isVisible={linkInsertState.isVisible}
               position={linkInsertState.position}
               selectedText={linkInsertState.selectedText}
-              onInsertLink={url => handleInlineLinkInsert(url, execCommand)}
+              onInsertLink={(url: string) =>
+                handleInlineLinkInsert(url, execCommand)
+              }
               onCancel={hideLinkInsert}
             />
           </div>
 
-          {editorConfig.features.preview && (
+          {editorConfig.features?.preview && (
             <PreviewPane
               content={content}
               isVisible={isPreviewVisible}
@@ -342,22 +356,38 @@ const Editor = forwardRef(
           )}
         </div>
 
-        {editorConfig.features.fileUpload && (
+        {editorConfig.features?.fileUpload && (
           <FileUpload
             ref={fileInputRef}
-            uploadedFiles={uploadedFiles}
+            uploadedFiles={
+              uploadedFiles as unknown as Array<{
+                id: string
+                name: string
+                size: number
+                type: string
+                url: string
+                uploadedAt: Date
+              }>
+            }
             onFileUpload={handleFileUpload}
           />
         )}
 
-        {editorConfig.features.customModals && (
+        {editorConfig.features?.customModals && (
           <InputModal
             isVisible={modalState.isVisible}
             title={modalState.title}
             placeholder={modalState.placeholder}
             defaultValue={modalState.defaultValue}
             buttonText={modalState.buttonText}
-            inputType={modalState.inputType}
+            inputType={
+              modalState.inputType as
+                | "text"
+                | "email"
+                | "password"
+                | "url"
+                | "number"
+            }
             onSubmit={modalState.onSubmit}
             onCancel={modalState.onCancel}
           />
@@ -368,91 +398,5 @@ const Editor = forwardRef(
 )
 
 Editor.displayName = "Editor"
-
-Editor.propTypes = {
-  initialContent: PropTypes.string,
-  placeholder: PropTypes.string,
-  onContentChange: PropTypes.func,
-  className: PropTypes.string,
-  config: PropTypes.shape({
-    toolbar: PropTypes.shape({
-      show: PropTypes.bool,
-      items: PropTypes.shape({
-        bold: PropTypes.bool,
-        italic: PropTypes.bool,
-        underline: PropTypes.bool,
-        strikethrough: PropTypes.bool,
-        alignLeft: PropTypes.bool,
-        alignCenter: PropTypes.bool,
-        alignRight: PropTypes.bool,
-        alignJustify: PropTypes.bool,
-        orderedList: PropTypes.bool,
-        unorderedList: PropTypes.bool,
-        heading1: PropTypes.bool,
-        heading2: PropTypes.bool,
-        heading3: PropTypes.bool,
-        fontFamily: PropTypes.bool,
-        fontSize: PropTypes.bool,
-        textColor: PropTypes.bool,
-        backgroundColor: PropTypes.bool,
-        link: PropTypes.bool,
-        inlineCode: PropTypes.bool,
-        codeBlock: PropTypes.bool,
-        fileUpload: PropTypes.bool,
-        preview: PropTypes.bool,
-        previewLayout: PropTypes.bool,
-        maximize: PropTypes.bool,
-        undo: PropTypes.bool,
-        redo: PropTypes.bool,
-        clearFormatting: PropTypes.bool,
-      }),
-    }),
-    floatingToolbar: PropTypes.shape({
-      show: PropTypes.bool,
-      items: PropTypes.shape({
-        bold: PropTypes.bool,
-        italic: PropTypes.bool,
-        underline: PropTypes.bool,
-        link: PropTypes.bool,
-      }),
-    }),
-    features: PropTypes.shape({
-      preview: PropTypes.bool,
-      fileUpload: PropTypes.bool,
-      inlineLinkInsert: PropTypes.bool,
-      customModals: PropTypes.bool,
-      dragAndDrop: PropTypes.bool,
-    }),
-    typography: PropTypes.shape({
-      fontFamilies: PropTypes.arrayOf(
-        PropTypes.shape({
-          label: PropTypes.string.isRequired,
-          value: PropTypes.string.isRequired,
-        })
-      ),
-      fontSizes: PropTypes.arrayOf(
-        PropTypes.shape({
-          label: PropTypes.string.isRequired,
-          value: PropTypes.string.isRequired,
-        })
-      ),
-    }),
-    settings: PropTypes.shape({
-      placeholder: PropTypes.string,
-      initialContent: PropTypes.string,
-      autoFocus: PropTypes.bool,
-      spellCheck: PropTypes.bool,
-      editorType: PropTypes.oneOf(["html", "markdown"]),
-    }),
-  }),
-}
-
-Editor.defaultProps = {
-  initialContent: "",
-  placeholder: "Start writing...",
-  onContentChange: () => {},
-  className: "",
-  config: {},
-}
 
 export default Editor
