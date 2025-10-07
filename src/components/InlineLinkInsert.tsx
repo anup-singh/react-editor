@@ -1,26 +1,49 @@
-import React, { useState, useRef, useEffect } from "react"
-import PropTypes from "prop-types"
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  FC,
+  FormEvent,
+  ChangeEvent,
+  KeyboardEvent,
+} from "react"
 
-const InlineLinkInsert = ({
+// Define the shape for the position prop
+interface Position {
+  top: number
+  left: number
+}
+
+// Define the component's props using an interface
+interface InlineLinkInsertProps {
+  isVisible: boolean
+  position: Position
+  selectedText: string
+  onInsertLink: (url: string) => void
+  onCancel: () => void
+}
+
+const InlineLinkInsert: FC<InlineLinkInsertProps> = ({
   isVisible,
   position,
   selectedText,
   onInsertLink,
   onCancel,
 }) => {
-  const [url, setUrl] = useState("")
-  const inputRef = useRef(null)
+  const [url, setUrl] = useState<string>("")
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isVisible) {
       setUrl("")
+      // Using a timeout to ensure the element is in the DOM and focusable
       setTimeout(() => {
         inputRef.current?.focus()
       }, 100)
     }
   }, [isVisible])
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (url.trim()) {
       onInsertLink(url.trim())
@@ -33,13 +56,15 @@ const InlineLinkInsert = ({
     onCancel()
   }
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       handleCancel()
     }
   }
 
-  if (!isVisible) return null
+  if (!isVisible) {
+    return null
+  }
 
   return (
     <div
@@ -60,7 +85,9 @@ const InlineLinkInsert = ({
             ref={inputRef}
             type="url"
             value={url}
-            onChange={e => setUrl(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setUrl(e.target.value)
+            }
             onKeyDown={handleKeyDown}
             placeholder="Enter URL (e.g., https://example.com)"
             className="inline-link-input"
@@ -85,17 +112,6 @@ const InlineLinkInsert = ({
       </div>
     </div>
   )
-}
-
-InlineLinkInsert.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
-  position: PropTypes.shape({
-    top: PropTypes.number.isRequired,
-    left: PropTypes.number.isRequired,
-  }).isRequired,
-  selectedText: PropTypes.string.isRequired,
-  onInsertLink: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
 }
 
 export default InlineLinkInsert

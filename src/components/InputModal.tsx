@@ -1,7 +1,26 @@
-import React, { useState, useRef, useEffect } from "react"
-import PropTypes from "prop-types"
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  FC,
+  FormEvent,
+  ChangeEvent,
+  KeyboardEvent,
+} from "react"
 
-const InputModal = ({
+// Define the component's props with a clear interface.
+interface InputModalProps {
+  isVisible: boolean
+  title: string
+  placeholder: string
+  defaultValue?: string
+  onSubmit?: (value: string) => void
+  onCancel?: () => void
+  buttonText?: string
+  inputType?: "text" | "password" | "email" | "url" | "number" // Using a union type for better safety.
+}
+
+const InputModal: FC<InputModalProps> = ({
   isVisible,
   title,
   placeholder,
@@ -11,20 +30,21 @@ const InputModal = ({
   buttonText = "Add",
   inputType = "text",
 }) => {
-  const [value, setValue] = useState(defaultValue)
-  const inputRef = useRef(null)
+  const [value, setValue] = useState<string>(defaultValue)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (isVisible) {
       setValue(defaultValue)
       setTimeout(() => {
+        // Use optional chaining for safety.
         inputRef.current?.focus()
         inputRef.current?.select()
       }, 100)
     }
   }, [isVisible, defaultValue])
 
-  const handleSubmit = e => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (value.trim() && onSubmit) {
       onSubmit(value.trim())
@@ -39,13 +59,15 @@ const InputModal = ({
     }
   }
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
       handleCancel()
     }
   }
 
-  if (!isVisible) return null
+  if (!isVisible) {
+    return null
+  }
 
   return (
     <div className="input-modal-overlay" onClick={handleCancel}>
@@ -67,7 +89,9 @@ const InputModal = ({
               ref={inputRef}
               type={inputType}
               value={value}
-              onChange={e => setValue(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setValue(e.target.value)
+              }
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               className="input-modal-input"
@@ -94,25 +118,6 @@ const InputModal = ({
       </div>
     </div>
   )
-}
-
-InputModal.propTypes = {
-  isVisible: PropTypes.bool.isRequired,
-  title: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  defaultValue: PropTypes.string,
-  onSubmit: PropTypes.func,
-  onCancel: PropTypes.func,
-  buttonText: PropTypes.string,
-  inputType: PropTypes.string,
-}
-
-InputModal.defaultProps = {
-  defaultValue: "",
-  buttonText: "Add",
-  inputType: "text",
-  onSubmit: () => {},
-  onCancel: () => {},
 }
 
 export default InputModal

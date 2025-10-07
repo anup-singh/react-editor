@@ -1,44 +1,45 @@
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, RefObject } from "react"
 
+/**
+ * A custom hook for managing rich text editor commands and functionality.
+ * @param editorRef A React ref object for the content editable div.
+ * @param handleContentChange A function to call when the editor's content changes.
+ * @param showModal A function to display a modal and get a user's input.
+ */
 export const useEditorCommands = (
-  editorRef,
-  handleContentChange,
-  showModal
+  editorRef: RefObject<HTMLDivElement>,
+  handleContentChange: (ref: RefObject<HTMLDivElement>) => void,
+  showModal: (options: {
+    title: string
+    placeholder: string
+    buttonText: string
+    inputType: string
+  }) => Promise<string>
 ) => {
-  const handleCodeBlockKeyDown = useCallback(e => {
+  const handleCodeBlockKeyDown = useCallback((e: KeyboardEvent) => {
+    // Only handle 'Enter' key presses
     if (e.key === "Enter") {
       e.preventDefault()
       e.stopPropagation()
       e.stopImmediatePropagation()
 
-      // Get the current selection
       const selection = window.getSelection()
-      if (selection.rangeCount > 0) {
+      if (selection && selection.rangeCount > 0) {
         const range = selection.getRangeAt(0)
-
-        // Create a text node with newline
         const newlineNode = document.createTextNode("\n")
 
-        // Delete any selected content
         range.deleteContents()
-
-        // Insert the newline
         range.insertNode(newlineNode)
 
-        // Move cursor after the newline
         range.setStartAfter(newlineNode)
         range.setEndAfter(newlineNode)
 
-        // Update selection
         selection.removeAllRanges()
         selection.addRange(range)
       }
-
-      return false
     }
   }, [])
 
-  // Set up event listeners for existing and new code blocks
   useEffect(() => {
     const currentEditor = editorRef.current
 
@@ -47,16 +48,19 @@ export const useEditorCommands = (
 
       const codeBlocks = currentEditor.querySelectorAll(".code-input")
       codeBlocks.forEach(codeBlock => {
-        // Remove existing listeners to avoid duplicates
-        codeBlock.removeEventListener("keydown", handleCodeBlockKeyDown, true)
-        codeBlock.removeEventListener("keypress", handleCodeBlockKeyDown, true)
+        // Ensure type assertion for element to add/remove event listeners
+        const htmlElement = codeBlock as HTMLDivElement
+        const preElement = htmlElement.closest(".code-block") as HTMLPreElement
 
-        // Add event listeners with capture phase to ensure they run first
-        codeBlock.addEventListener("keydown", handleCodeBlockKeyDown, true)
-        codeBlock.addEventListener("keypress", handleCodeBlockKeyDown, true)
+        htmlElement.removeEventListener("keydown", handleCodeBlockKeyDown, true)
+        htmlElement.removeEventListener(
+          "keypress",
+          handleCodeBlockKeyDown,
+          true
+        )
+        htmlElement.addEventListener("keydown", handleCodeBlockKeyDown, true)
+        htmlElement.addEventListener("keypress", handleCodeBlockKeyDown, true)
 
-        // Also add to the parent pre element for safety
-        const preElement = codeBlock.closest(".code-block")
         if (preElement) {
           preElement.removeEventListener(
             "keydown",
@@ -68,10 +72,8 @@ export const useEditorCommands = (
       })
     }
 
-    // Set up listeners initially and on content changes
     setupCodeBlockListeners()
 
-    // Use a MutationObserver to detect when new code blocks are added
     const observer = new MutationObserver(() => {
       setupCodeBlockListeners()
     })
@@ -85,18 +87,24 @@ export const useEditorCommands = (
 
     return () => {
       observer.disconnect()
-      // Clean up event listeners
       if (currentEditor) {
         const codeBlocks = currentEditor.querySelectorAll(".code-input")
         codeBlocks.forEach(codeBlock => {
-          codeBlock.removeEventListener("keydown", handleCodeBlockKeyDown, true)
-          codeBlock.removeEventListener(
+          const htmlElement = codeBlock as HTMLDivElement
+          htmlElement.removeEventListener(
+            "keydown",
+            handleCodeBlockKeyDown,
+            true
+          )
+          htmlElement.removeEventListener(
             "keypress",
             handleCodeBlockKeyDown,
             true
           )
 
-          const preElement = codeBlock.closest(".code-block")
+          const preElement = htmlElement.closest(
+            ".code-block"
+          ) as HTMLPreElement
           if (preElement) {
             preElement.removeEventListener(
               "keydown",
@@ -110,10 +118,9 @@ export const useEditorCommands = (
   }, [editorRef, handleCodeBlockKeyDown])
 
   const execCommand = useCallback(
-    (command, value = null) => {
+    (command: string, value: string | null = null) => {
       editorRef.current?.focus()
       document.execCommand(command, false, value)
-
       setTimeout(() => {
         handleContentChange(editorRef)
       }, 0)
@@ -122,17 +129,21 @@ export const useEditorCommands = (
   )
 
   const insertLink = useCallback(
-    async (showLinkInsert = null, editorRef = null) => {
+    async (
+      showLinkInsert?: (
+        selection: Selection,
+        editorRef: RefObject<HTMLDivElement>
+      ) => void,
+      editorRefParam?: RefObject<HTMLDivElement>
+    ) => {
       const selection = window.getSelection()
-      const selectedText = selection.toString().trim()
+      const selectedText = selection?.toString().trim() ?? ""
 
-      // If text is selected and inline link insert is available, use it
-      if (selectedText && showLinkInsert && editorRef) {
-        showLinkInsert(selection, editorRef)
+      if (selectedText && showLinkInsert && editorRefParam) {
+        showLinkInsert(selection!, editorRefParam)
         return
       }
 
-      // Otherwise use the modal for regular link insertion
       try {
         const url = await showModal({
           title: "Insert Link",
@@ -143,8 +154,8 @@ export const useEditorCommands = (
         if (url) {
           execCommand("createLink", url)
         }
-      } catch {
-        // User cancelled
+      } catch (e) {
+        console.log("Link insertion cancelled: ", e)
       }
     },
     [execCommand, showModal]
@@ -152,14 +163,12 @@ export const useEditorCommands = (
 
   const insertInlineCode = useCallback(() => {
     const selection = window.getSelection()
-    if (selection.rangeCount > 0) {
+    if (selection && selection.rangeCount > 0) {
       const selectedText = selection.toString()
       if (selectedText) {
-        // Wrap selected text in code tags
         const codeHtml = `<code class="inline-code">${selectedText}</code>`
         execCommand("insertHTML", codeHtml)
       } else {
-        // Insert empty code tags and position cursor inside
         const codeHtml = '<code class="inline-code">code</code>&nbsp;'
         execCommand("insertHTML", codeHtml)
       }
@@ -170,8 +179,7 @@ export const useEditorCommands = (
     const selection = window.getSelection()
     let codeContent = "Paste your code here..."
 
-    // If text is selected, use it as the initial code content
-    if (selection.rangeCount > 0) {
+    if (selection && selection.rangeCount > 0) {
       const selectedText = selection.toString().trim()
       if (selectedText) {
         codeContent = selectedText
@@ -187,12 +195,11 @@ export const useEditorCommands = (
 
     execCommand("insertHTML", codeBlockHtml)
 
-    // Focus the code block after insertion and add event listeners
     setTimeout(() => {
-      const codeBlocks = editorRef.current?.querySelectorAll(".code-input")
+      const codeBlocks =
+        editorRef.current?.querySelectorAll<HTMLElement>(".code-input")
       const lastCodeBlock = codeBlocks?.[codeBlocks.length - 1]
       if (lastCodeBlock) {
-        // Add event listeners immediately
         lastCodeBlock.addEventListener("keydown", handleCodeBlockKeyDown, true)
         lastCodeBlock.addEventListener("keypress", handleCodeBlockKeyDown, true)
 
@@ -202,12 +209,11 @@ export const useEditorCommands = (
         }
 
         lastCodeBlock.focus()
-        // Select all text if it's the placeholder
         if (lastCodeBlock.textContent === "Paste your code here...") {
           const range = document.createRange()
           range.selectNodeContents(lastCodeBlock)
-          selection.removeAllRanges()
-          selection.addRange(range)
+          selection?.removeAllRanges()
+          selection?.addRange(range)
         }
       }
     }, 100)

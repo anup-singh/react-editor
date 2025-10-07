@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useRef } from 'react';
-import Editor from '../src/index';
+import Editor from '../src/index.ts';
 
 const ExamplePage = () => {
   const [editorContent, setEditorContent] = useState('<p>Welcome to your custom content editor!</p><p>Try these features:</p><ul><li>Select text to see the floating toolbar</li><li>Use the main toolbar for formatting</li><li>Upload images and files</li><li>Add links and change colors</li></ul>');
@@ -232,24 +232,24 @@ const ExamplePage = () => {
           Custom React Content Editor
         </h1>
 
-        {/* Navigation as */}
-        <div className="mb-8 p-4 bg-gray-50 rounded-lg border">
-          <h3 className="text-lg font-semibold mb-3 text-gray-700">Examples & Documentation</h3>
+        {/* Navigation Links */}
+        <div className="mb-8 p-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">Examples & Documentation</h3>
           <div className="flex flex-wrap gap-4">
             <a
               href="/api-example"
-              className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+              className="inline-flex items-center px-5 py-3 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               📡 API Integration Example
             </a>
             <a
               href="/page-2"
-              className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+              className="inline-flex items-center px-5 py-3 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               📖 More Examples
             </a>
           </div>
-          <p className="text-sm text-gray-600 mt-3">
+          <p className="text-sm text-gray-600 mt-4 leading-relaxed">
             Learn how to integrate the editor with server APIs, send content in multiple formats, and handle file uploads.
           </p>
         </div>
@@ -258,55 +258,78 @@ const ExamplePage = () => {
           <h2 className="text-xl font-semibold mb-3 text-gray-700">Full Featured Editor</h2>
 
           {/* Editor Control Buttons */}
-          <div className="mb-4 flex flex-wrap gap-2">
-            <button
-              onClick={focusFullEditor}
-              className="px-3 py-2 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-            >
-              Focus
-            </button>
-            <button
-              onClick={blurFullEditor}
-              className="px-3 py-2 bg-gray-500 text-white rounded text-sm hover:bg-gray-600"
-            >
-              Blur
-            </button>
-            <button
-              onClick={checkFullEditorFocus}
-              className="px-3 py-2 bg-green-500 text-white rounded text-sm hover:bg-green-600"
-            >
-              Check Focus
-            </button>
-            <button
-              onClick={enableFullEditor}
-              className="px-3 py-2 bg-emerald-500 text-white rounded text-sm hover:bg-emerald-600"
-            >
-              Enable
-            </button>
-            <button
-              onClick={disableFullEditor}
-              className="px-3 py-2 bg-red-500 text-white rounded text-sm hover:bg-red-600"
-            >
-              Disable
-            </button>
-            <button
-              onClick={clearFullEditor}
-              className="px-3 py-2 bg-orange-500 text-white rounded text-sm hover:bg-orange-600"
-            >
-              Clear
-            </button>
-            <button
-              onClick={setFullEditorContent}
-              className="px-3 py-2 bg-purple-500 text-white rounded text-sm hover:bg-purple-600"
-            >
-              Set Content
-            </button>
-            <button
-              onClick={getFullEditorContents}
-              className="px-3 py-2 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600"
-            >
-              Get Contents
-            </button>
+          <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <h4 className="text-sm font-medium text-gray-700 mb-3">Editor Controls</h4>
+            <div className="space-y-4">
+              {/* Focus Controls */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Focus Management</p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={focusFullEditor}
+                    className="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    🎯 Focus
+                  </button>
+                  <button
+                    onClick={blurFullEditor}
+                    className="inline-flex items-center px-4 py-2 bg-gray-500 text-white rounded-md text-sm font-medium hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    ⭕ Blur
+                  </button>
+                  <button
+                    onClick={checkFullEditorFocus}
+                    className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-md text-sm font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    ✅ Check Focus
+                  </button>
+                </div>
+              </div>
+
+              {/* State Controls */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Editor State</p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={enableFullEditor}
+                    className="inline-flex items-center px-4 py-2 bg-emerald-500 text-white rounded-md text-sm font-medium hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    🟢 Enable
+                  </button>
+                  <button
+                    onClick={disableFullEditor}
+                    className="inline-flex items-center px-4 py-2 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    🔴 Disable
+                  </button>
+                </div>
+              </div>
+
+              {/* Content Controls */}
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Content Management</p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={clearFullEditor}
+                    className="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-md text-sm font-medium hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    🧹 Clear
+                  </button>
+                  <button
+                    onClick={setFullEditorContent}
+                    className="inline-flex items-center px-4 py-2 bg-purple-500 text-white rounded-md text-sm font-medium hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    📝 Set Content
+                  </button>
+                  <button
+                    onClick={getFullEditorContents}
+                    className="inline-flex items-center px-4 py-2 bg-indigo-500 text-white rounded-md text-sm font-medium hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+                  >
+                    📋 Get Contents
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <Editor
@@ -336,13 +359,16 @@ const ExamplePage = () => {
           </p>
 
           {/* Markdown Editor Control Button */}
-          <div className="mb-4 flex gap-2">
-            <button
-              onClick={getMarkdownEditorContents}
-              className="px-3 py-2 bg-green-500 text-white rounded text-sm hover:bg-green-600"
-            >
-              Get Markdown Contents
-            </button>
+          <div className="mb-4 p-4 bg-green-50 rounded-lg border border-green-200">
+            <h4 className="text-sm font-medium text-gray-700 mb-3">Markdown Controls</h4>
+            <div className="flex gap-3">
+              <button
+                onClick={getMarkdownEditorContents}
+                className="inline-flex items-center px-4 py-2 bg-green-500 text-white rounded-md text-sm font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
+              >
+                📄 Get Markdown Contents
+              </button>
+            </div>
           </div>
 
           <Editor
@@ -369,38 +395,89 @@ const ExamplePage = () => {
           />
         </div>
 
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold mb-3 text-gray-700">Features:</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-            <div>
-              <h4 className="font-medium text-gray-800">Text Formatting:</h4>
-              <ul className="list-disc list-inside space-y-1">
-                <li>Bold, Italic, Underline, Strikethrough</li>
-                <li>Headings (H1, H2, H3)</li>
-                <li>Text alignment (Left, Center, Right)</li>
-                <li>Text and highlight colors</li>
+        <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl border border-gray-200 shadow-sm">
+          <h3 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
+            <span className="text-2xl mr-2">🚀</span>
+            Features
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-600">
+            <div className="space-y-3">
+              <h4 className="font-semibold text-gray-800 flex items-center text-base">
+                <span className="text-lg mr-2">✨</span>
+                Text Formatting
+              </h4>
+              <ul className="space-y-2 ml-6">
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-400 rounded-full mr-3"></span>
+                  Bold, Italic, Underline, Strikethrough
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                  Headings (H1, H2, H3)
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-400 rounded-full mr-3"></span>
+                  Text alignment (Left, Center, Right)
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-pink-400 rounded-full mr-3"></span>
+                  Text and highlight colors
+                </li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-medium text-gray-800">Content Features:</h4>
-              <ul className="list-disc list-inside space-y-1">
-                <li>Bullet and numbered lists</li>
-                <li>a insertion</li>
-                <li>Image and file uploads</li>
-                <li>Floating toolbar on text selection</li>
+            <div className="space-y-3">
+              <h4 className="font-semibold text-gray-800 flex items-center text-base">
+                <span className="text-lg mr-2">📝</span>
+                Content Features
+              </h4>
+              <ul className="space-y-2 ml-6">
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-400 rounded-full mr-3"></span>
+                  Bullet and numbered lists
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+                  Link insertion
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-indigo-400 rounded-full mr-3"></span>
+                  Image and file uploads
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-teal-400 rounded-full mr-3"></span>
+                  Floating toolbar on text selection
+                </li>
               </ul>
             </div>
           </div>
         </div>
 
-        <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-          <h4 className="font-medium text-blue-800 mb-2">How to Use:</h4>
-          <ul className="text-sm text-blue-700 space-y-1">
-            <li>• Use the toolbar above the editor for formatting options</li>
-            <li>• Select text to reveal the floating formatting toolbar</li>
-            <li>• Click the 📎 button to upload images and files</li>
-            <li>• Click the 🔗 button to add links</li>
-            <li>• Use color pickers to change text and background colors</li>
+        <div className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200 shadow-sm">
+          <h4 className="font-bold text-blue-800 mb-4 flex items-center text-lg">
+            <span className="text-xl mr-2">💡</span>
+            <span>How to Use</span>
+          </h4>
+          <ul className="text-sm text-blue-700 space-y-3">
+            <li className="flex items-start">
+              <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">1</span>
+              <span>Use the toolbar above the editor for formatting options</span>
+            </li>
+            <li className="flex items-start">
+              <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">2</span>
+              <span>Select text to reveal the floating formatting toolbar</span>
+            </li>
+            <li className="flex items-start">
+              <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">3</span>
+              <span>Click the <span className="bg-white px-1 rounded font-mono">📎</span> button to upload images and files</span>
+            </li>
+            <li className="flex items-start">
+              <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">4</span>
+              <span>Click the <span className="bg-white px-1 rounded font-mono">🔗</span> button to add links</span>
+            </li>
+            <li className="flex items-start">
+              <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">5</span>
+              <span>Use color pickers to change text and background colors</span>
+            </li>
           </ul>
         </div>
       </div>

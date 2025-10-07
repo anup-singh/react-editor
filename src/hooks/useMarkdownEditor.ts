@@ -1,118 +1,26 @@
-import { useCallback } from "react"
+import { useCallback, RefObject } from "react"
 import { markdownToHtml, htmlToMarkdown } from "../utils/markdownConverter"
 
-const useMarkdownEditor = (editorRef, editorType, onContentChange) => {
+/**
+ * A custom hook for managing a rich text editor with specific Markdown-related features.
+ * @param editorRef A React ref object for the content editable div.
+ * @param editorType The current editor type, either 'markdown' or 'html'.
+ * @param onContentChange A function to call when the editor's content changes.
+ */
+const useMarkdownEditor = (
+  editorRef: RefObject<HTMLDivElement>,
+  editorType: "html" | "markdown",
+  onContentChange: (ref: RefObject<HTMLDivElement>) => void
+) => {
   const isMarkdown = editorType === "markdown"
-  // const lastHtmlContent = useRef("")
 
-  // Handle markdown-specific key shortcuts
-  const handleMarkdownKeyDown = useCallback(
-    e => {
-      if (!isMarkdown || !editorRef.current) return
-
-      // Ctrl/Cmd + B for bold
-      if ((e.ctrlKey || e.metaKey) && e.key === "b") {
-        e.preventDefault()
-        insertMarkdownFormatting("**", "**")
-        return
-      }
-
-      // Ctrl/Cmd + I for italic
-      if ((e.ctrlKey || e.metaKey) && e.key === "i") {
-        e.preventDefault()
-        insertMarkdownFormatting("*", "*")
-        return
-      }
-
-      // Ctrl/Cmd + K for link
-      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-        e.preventDefault()
-        insertMarkdownLink()
-        return
-      }
-
-      // Tab for code block indentation
-      if (e.key === "Tab") {
-        e.preventDefault()
-        insertAtCursor("  ") // 2 spaces for indentation
-        return
-      }
-
-      // Enter key handling for lists
-      if (e.key === "Enter") {
-        handleMarkdownEnter(e)
-      }
-    },
-    [isMarkdown]
-  )
-
-  // Insert markdown formatting around selection
-  const insertMarkdownFormatting = useCallback(
-    (before, after) => {
-      const selection = window.getSelection()
-      if (!selection.rangeCount) return
-
-      const range = selection.getRangeAt(0)
-      const selectedText = range.toString()
-
-      const formattedText = before + selectedText + after
-      range.deleteContents()
-      range.insertNode(document.createTextNode(formattedText))
-
-      // Position cursor
-      if (selectedText) {
-        // If text was selected, place cursor after the formatting
-        range.setStart(range.endContainer, range.endOffset)
-      } else {
-        // If no text was selected, place cursor between the formatting
-        range.setStart(range.endContainer, range.endOffset - after.length)
-      }
-
-      selection.removeAllRanges()
-      selection.addRange(range)
-
-      // Trigger content change
-      if (onContentChange) {
-        onContentChange(editorRef)
-      }
-    },
-    [onContentChange]
-  )
-
-  // Insert markdown link
-  const insertMarkdownLink = useCallback(() => {
-    const selection = window.getSelection()
-    if (!selection.rangeCount) return
-
-    const range = selection.getRangeAt(0)
-    const selectedText = range.toString()
-
-    const linkText = selectedText || "Link text"
-    const linkMarkdown = `[${linkText}](url)`
-
-    range.deleteContents()
-    range.insertNode(document.createTextNode(linkMarkdown))
-
-    // Select the URL part for easy editing
-    const textNode = range.endContainer
-    const startOffset = range.endOffset - 4 // Position before 'url)'
-    const endOffset = range.endOffset - 1 // Position after 'url'
-
-    range.setStart(textNode, startOffset)
-    range.setEnd(textNode, endOffset)
-    selection.removeAllRanges()
-    selection.addRange(range)
-
-    if (onContentChange) {
-      onContentChange(editorRef)
-    }
-  }, [onContentChange])
-
-  // Insert text at cursor position
+  /**
+   * Inserts text at the current cursor position.
+   */
   const insertAtCursor = useCallback(
-    text => {
+    (text: string) => {
       const selection = window.getSelection()
-      if (!selection.rangeCount) return
+      if (!selection || !selection.rangeCount) return
 
       const range = selection.getRangeAt(0)
       range.deleteContents()
@@ -125,20 +33,83 @@ const useMarkdownEditor = (editorRef, editorType, onContentChange) => {
         onContentChange(editorRef)
       }
     },
-    [onContentChange]
+    [onContentChange, editorRef]
   )
 
-  // Handle Enter key for markdown lists
-  const handleMarkdownEnter = useCallback(
-    e => {
+  /**
+   * Inserts markdown formatting around a selected text or at the cursor.
+   */
+  const insertMarkdownFormatting = useCallback(
+    (before: string, after: string) => {
       const selection = window.getSelection()
-      if (!selection.rangeCount) return
+      if (!selection || !selection.rangeCount) return
 
       const range = selection.getRangeAt(0)
-      const textContent = editorRef.current.textContent
+      const selectedText = range.toString()
+      const formattedText = before + selectedText + after
+
+      range.deleteContents()
+      range.insertNode(document.createTextNode(formattedText))
+
+      if (selectedText) {
+        range.setStart(range.endContainer, range.endOffset)
+      } else {
+        range.setStart(range.endContainer, range.endOffset - after.length)
+      }
+
+      selection.removeAllRanges()
+      selection.addRange(range)
+
+      if (onContentChange) {
+        onContentChange(editorRef)
+      }
+    },
+    [onContentChange, editorRef]
+  )
+
+  /**
+   * Inserts a markdown link, selecting the URL part for easy editing.
+   */
+  const insertMarkdownLink = useCallback(() => {
+    const selection = window.getSelection()
+    if (!selection || !selection.rangeCount) return
+
+    const range = selection.getRangeAt(0)
+    const selectedText = range.toString()
+
+    const linkText = selectedText || "Link text"
+    const linkMarkdown = `[${linkText}](url)`
+
+    range.deleteContents()
+    range.insertNode(document.createTextNode(linkMarkdown))
+
+    const textNode = range.endContainer
+    const startOffset = range.endOffset - 4
+    const endOffset = range.endOffset - 1
+
+    range.setStart(textNode, startOffset)
+    range.setEnd(textNode, endOffset)
+    selection.removeAllRanges()
+    selection.addRange(range)
+
+    if (onContentChange) {
+      onContentChange(editorRef)
+    }
+  }, [onContentChange, editorRef])
+
+  /**
+   * Handles Enter key for list continuation in Markdown mode.
+   */
+  const handleMarkdownEnter = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const selection = window.getSelection()
+      const currentEditor = editorRef.current
+      if (!selection || !selection.rangeCount || !currentEditor) return
+
+      const range = selection.getRangeAt(0)
+      const textContent = currentEditor.textContent || ""
       const cursorPosition = range.startOffset
 
-      // Find the current line
       const beforeCursor = textContent.substring(0, cursorPosition)
       const currentLineStart = beforeCursor.lastIndexOf("\n") + 1
       const currentLine = textContent.substring(
@@ -146,7 +117,6 @@ const useMarkdownEditor = (editorRef, editorType, onContentChange) => {
         cursorPosition
       )
 
-      // Check if current line is a list item
       const unorderedListMatch = currentLine.match(/^(\s*)([-*+])\s/)
       const orderedListMatch = currentLine.match(/^(\s*)(\d+)\.\s/)
 
@@ -163,10 +133,54 @@ const useMarkdownEditor = (editorRef, editorType, onContentChange) => {
         insertAtCursor(newListItem)
       }
     },
-    [insertAtCursor]
+    [insertAtCursor, editorRef]
   )
 
-  // Markdown command handlers
+  /**
+   * Handle markdown-specific key shortcuts
+   */
+  const handleMarkdownKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (!isMarkdown || !editorRef.current) return
+
+      if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+        e.preventDefault()
+        insertMarkdownFormatting("**", "**")
+        return
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === "i") {
+        e.preventDefault()
+        insertMarkdownFormatting("*", "*")
+        return
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault()
+        insertMarkdownLink()
+        return
+      }
+
+      if (e.key === "Tab") {
+        e.preventDefault()
+        insertAtCursor("  ")
+        return
+      }
+
+      if (e.key === "Enter") {
+        handleMarkdownEnter(e)
+      }
+    },
+    [
+      isMarkdown,
+      editorRef,
+      insertMarkdownFormatting,
+      insertMarkdownLink,
+      insertAtCursor,
+      handleMarkdownEnter,
+    ]
+  )
+
   const markdownCommands = {
     bold: () => insertMarkdownFormatting("**", "**"),
     italic: () => insertMarkdownFormatting("*", "*"),
@@ -181,44 +195,41 @@ const useMarkdownEditor = (editorRef, editorType, onContentChange) => {
     codeBlock: () => insertMarkdownFormatting("\n```\n", "\n```\n"),
   }
 
-  // Convert content when editor type changes
-  const convertContent = useCallback((content, fromType, toType) => {
-    if (fromType === toType) return content
+  const convertContent = useCallback(
+    (
+      content: string,
+      fromType: "html" | "markdown",
+      toType: "html" | "markdown"
+    ) => {
+      if (fromType === toType) return content
+      if (fromType === "html" && toType === "markdown") {
+        return htmlToMarkdown(content)
+      }
+      if (fromType === "markdown" && toType === "html") {
+        return markdownToHtml(content)
+      }
+      return content
+    },
+    []
+  )
 
-    if (fromType === "html" && toType === "markdown") {
-      return htmlToMarkdown(content)
-    }
-
-    if (fromType === "markdown" && toType === "html") {
-      return markdownToHtml(content)
-    }
-
-    return content
-  }, [])
-
-  // Get current content in appropriate format
   const getCurrentContent = useCallback(() => {
     if (!editorRef.current) return ""
+    return isMarkdown
+      ? editorRef.current.textContent || ""
+      : editorRef.current.innerHTML || ""
+  }, [isMarkdown, editorRef])
 
-    if (isMarkdown) {
-      return editorRef.current.textContent || ""
-    } else {
-      return editorRef.current.innerHTML || ""
-    }
-  }, [isMarkdown])
-
-  // Set content in appropriate format
   const setContent = useCallback(
-    content => {
+    (content: string) => {
       if (!editorRef.current) return
-
       if (isMarkdown) {
         editorRef.current.textContent = content
       } else {
         editorRef.current.innerHTML = content
       }
     },
-    [isMarkdown]
+    [isMarkdown, editorRef]
   )
 
   return {

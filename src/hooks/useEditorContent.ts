@@ -1,14 +1,20 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, RefObject } from "react"
 
+/**
+ * A custom hook for managing content of a rich text editor.
+ * @param initialContent The initial content string.
+ * @param onContentChange A callback function to be invoked when the content changes.
+ * @param editorType The type of editor content, either 'html' or 'markdown'.
+ */
 export const useEditorContent = (
   initialContent = "",
-  onContentChange,
-  editorType = "html"
+  onContentChange: (content: string) => void,
+  editorType: "html" | "markdown" = "html"
 ) => {
-  const [content, setContent] = useState(initialContent)
+  const [content, setContent] = useState<string>(initialContent)
 
   const handleContentChange = useCallback(
-    editorRef => {
+    (editorRef: RefObject<HTMLDivElement>) => {
       if (editorRef.current) {
         // Get content based on editor type
         const newContent =
