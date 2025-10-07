@@ -639,7 +639,7 @@ const cleaned: string = cleanContent(content, 'markdown');
 | `detectContentType` | Detect content type (HTML/Markdown) | `content: string` | `EditorType` |
 | `cleanContent` | Clean and normalize content | `content: string, editorType: EditorType` | `string` |
 
-## Latest Updates (v1.0.2)
+## Latest Updates (v1.0.3)
 
 ### TypeScript Migration ✨
 - **Complete TypeScript Conversion**: All source files migrated to TypeScript
