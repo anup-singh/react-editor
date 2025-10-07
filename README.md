@@ -58,7 +58,7 @@ const MyComponent = () => {
   )
 }
 ```
-![Default Editor (All Features Enabled)](https://github.com/anup-singh/react-editor/blob/feature/improved-readme/screens/full-editor.png)
+![Default Editor (All Features Enabled)](https://github.com/anup-singh/react-editor/blob/main/screens/full-editor.png)
 
 
 ### Custom Configuration
@@ -86,7 +86,7 @@ const MyComponent = () => {
 }
 ```
 
-![Default Editor (All Features Enabled)](https://github.com/anup-singh/react-editor/blob/feature/improved-readme/screens/minimal-custom-config.png)
+![Default Editor (All Features Enabled)](https://github.com/anup-singh/react-editor/blob/main/screens/minimal-custom-config.png)
 
 
 ## Markdown Support
@@ -158,7 +158,7 @@ const MarkdownEditor = () => {
   )
 }
 ```
-![Alt text](https://github.com/anup-singh/react-editor/blob/feature/improved-readme/screens/markdown-editor-preview.png)
+![Alt text](https://github.com/anup-singh/react-editor/blob/main/screens/markdown-editor-preview.png)
 
 ### Supported Markdown Features
 
