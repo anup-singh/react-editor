@@ -1,7 +1,7 @@
 {
   "name": "@tech-library/react-editor",
   "description": "A React Based Rich text Editor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Anup Singh",
   "main": "dist/index.js",
   "module": "dist/index.js",
